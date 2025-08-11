@@ -273,30 +273,30 @@
                         <div class="bg-gray-700 rounded-lg p-3 flex justify-between items-center">
                             <div>
                                 <h3 class="font-bold">Tavern Capacity</h3>
-                                <p class="text-sm text-gray-300">Increase max adventurers from <span id="current-capacity">5</span> to <span id="next-capacity">10</span></p>
+                                <p class="text-sm text-gray-300">Increase max adventurers (Lvl <span id="capacity-level">1</span>)</p>
                             </div>
-                            <button class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded-lg transition" onclick="buyUpgrade('capacity')">
-                                500g
+                            <button class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded-lg transition upgrade-btn" onclick="buyUpgrade('capacity')" data-type="capacity">
+                                <span id="capacity-cost">500</span>g
                             </button>
                         </div>
                         
                         <div class="bg-gray-700 rounded-lg p-3 flex justify-between items-center">
                             <div>
                                 <h3 class="font-bold">Auto-Battle Speed</h3>
-                                <p class="text-sm text-gray-300">Increase battle speed by 25%</p>
+                                <p class="text-sm text-gray-300">Increase battle speed (Lvl <span id="speed-level">1</span>)</p>
                             </div>
-                            <button class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded-lg transition" onclick="buyUpgrade('speed')">
-                                250g
+                            <button class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded-lg transition upgrade-btn" onclick="buyUpgrade('speed')" data-type="speed">
+                                <span id="speed-cost">250</span>g
                             </button>
                         </div>
                         
                         <div class="bg-gray-700 rounded-lg p-3 flex justify-between items-center">
                             <div>
                                 <h3 class="font-bold">Gold Find</h3>
-                                <p class="text-sm text-gray-300">Increase gold earned by 20%</p>
+                                <p class="text-sm text-gray-300">Increase gold earned (Lvl <span id="gold-level">1</span>)</p>
                             </div>
-                            <button class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded-lg transition" onclick="buyUpgrade('gold')">
-                                300g
+                            <button class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded-lg transition upgrade-btn" onclick="buyUpgrade('gold')" data-type="gold">
+                                <span id="gold-cost">300</span>g
                             </button>
                         </div>
                     </div>
@@ -441,8 +441,7 @@
             }
             
             // Update upgrades
-            document.getElementById('current-capacity').textContent = gameState.party.length;
-            document.getElementById('next-capacity').textContent = gameState.party.length + 5;
+            updateUpgradeUI();
             
             // Update upgrade menu if open
             const menu = document.querySelector('.fixed');
@@ -459,6 +458,34 @@
                     updateUpgradeButtonStates(gameState.party[characterIndex], menu);
                 }
             }
+        }
+
+        // Update upgrade UI elements
+        function updateUpgradeUI() {
+            // Update global upgrade levels and costs
+            document.getElementById('capacity-level').textContent = gameState.upgrades.capacity.level;
+            document.getElementById('speed-level').textContent = gameState.upgrades.speed.level;
+            document.getElementById('gold-level').textContent = gameState.upgrades.gold.level;
+            
+            document.getElementById('capacity-cost').textContent = gameState.upgrades.capacity.cost;
+            document.getElementById('speed-cost').textContent = gameState.upgrades.speed.cost;
+            document.getElementById('gold-cost').textContent = gameState.upgrades.gold.cost;
+            
+            // Update button states based on gold
+            const buttons = document.querySelectorAll('.upgrade-btn[data-type]');
+            buttons.forEach(btn => {
+                const type = btn.getAttribute('data-type');
+                const cost = gameState.upgrades[type].cost;
+                if (gameState.gold < cost) {
+                    btn.classList.add('opacity-50', 'cursor-not-allowed');
+                    btn.classList.remove('hover:bg-blue-700');
+                    btn.disabled = true;
+                } else {
+                    btn.classList.remove('opacity-50', 'cursor-not-allowed');
+                    btn.classList.add('hover:bg-blue-700');
+                    btn.disabled = false;
+                }
+            });
         }
 
         // Update upgrade button states based on gold
@@ -688,23 +715,28 @@
                         btn.setAttribute('onclick', `upgradeStat(${slotIndex}, '${stat}', ${upgrade.increment}, ${upgrade.cost})`);
                     }
                     
-                    // Update stat display
-                    const statDisplays = menu.querySelectorAll('p.text-sm');
-                    for (let display of statDisplays) {
-                        if (display.textContent.includes(stat)) {
-                            if (stat === 'attack') {
-                                display.innerHTML = `Current: ${character.attack} (Lvl ${upgrade.level})`;
-                            } else if (stat === 'defense') {
-                                display.innerHTML = `Current: ${character.defense} (Lvl ${upgrade.level})`;
-                            } else if (stat === 'maxHealth') {
-                                display.innerHTML = `Current: ${character.maxHealth} (Lvl ${upgrade.level})`;
-                            } else if (stat === 'attackSpeed') {
-                                display.innerHTML = `Current: ${character.attackSpeed}ms (Lvl ${upgrade.level})`;
-                            } else if (stat === 'dodgeRate') {
-                                display.innerHTML = `Current: ${(character.dodgeRate * 100).toFixed(1)}% (Lvl ${upgrade.level})`;
-                            } else if (stat === 'critChance') {
-                                display.innerHTML = `Current: ${(character.critChance * 100).toFixed(1)}% (Lvl ${upgrade.level})`;
+                    // Update stat display - find the correct stat display element
+                    const statContainers = menu.querySelectorAll('.bg-gray-700.rounded-lg.p-3');
+                    for (let container of statContainers) {
+                        const titleElement = container.querySelector('h4.font-bold');
+                        if (titleElement && titleElement.textContent.includes(getStatDisplayName(stat))) {
+                            const statDisplay = container.querySelector('p.text-sm.text-gray-300');
+                            if (statDisplay) {
+                                if (stat === 'attack') {
+                                    statDisplay.innerHTML = `Current: ${character.attack} (Lvl ${upgrade.level})`;
+                                } else if (stat === 'defense') {
+                                    statDisplay.innerHTML = `Current: ${character.defense} (Lvl ${upgrade.level})`;
+                                } else if (stat === 'maxHealth') {
+                                    statDisplay.innerHTML = `Current: ${character.maxHealth} (Lvl ${upgrade.level})`;
+                                } else if (stat === 'attackSpeed') {
+                                    statDisplay.innerHTML = `Current: ${character.attackSpeed}ms (Lvl ${upgrade.level})`;
+                                } else if (stat === 'dodgeRate') {
+                                    statDisplay.innerHTML = `Current: ${(character.dodgeRate * 100).toFixed(1)}% (Lvl ${upgrade.level})`;
+                                } else if (stat === 'critChance') {
+                                    statDisplay.innerHTML = `Current: ${(character.critChance * 100).toFixed(1)}% (Lvl ${upgrade.level})`;
+                                }
                             }
+                            break;
                         }
                     }
                     
@@ -714,6 +746,19 @@
             } else {
                 addToLog("Not enough gold for this upgrade!");
             }
+        }
+
+        // Helper function to get display name for stats
+        function getStatDisplayName(stat) {
+            const names = {
+                'attack': 'Attack Power',
+                'defense': 'Defense',
+                'maxHealth': 'Hit Points',
+                'attackSpeed': 'Attack Speed',
+                'dodgeRate': 'Dodge Rate',
+                'critChance': 'Critical Chance'
+            };
+            return names[stat] || stat;
         }
 
         // Update tavern UI
