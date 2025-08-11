@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Soda Tavern - Idle RPG</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        
+        .slide-in {
+            animation: slideIn 0.3s ease-out;
+        }
+        
+        .damage-popup {
+            position: absolute;
+            color: red;
+            font-weight: bold;
+            animation: damageAnimation 1s forwards;
+            pointer-events: none;
+        }
+        
+        @keyframes damageAnimation {
+            0% { transform: translateY(0); opacity: 1; }
+            100% { transform: translateY(-50px); opacity: 0; }
+        }
+        
+        .progress-bar {
+            transition: width 0.3s ease;
+        }
+        
+        .character {
+            transition: all 0.2s ease;
+        }
+        
+        .character:hover {
+            transform: scale(1.05);
+        }
+        
+        .character-attack {
+            animation: attackAnimation 0.3s ease;
+        }
+        
+        @keyframes attackAnimation {
+            0% { transform: translateX(0); }
+            50% { transform: translateX(10px); }
+            100% { transform: translateX(0); }
+        }
+        
+        .enemy-attack {
+            animation: enemyAttackAnimation 0.3s ease;
+        }
+        
+        @keyframes enemyAttackAnimation {
+            0% { transform: translateX(0); }
+            50% { transform: translateX(-10px); }
+            100% { transform: translateX(0); }
+        }
+        
+        .shake {
+            animation: shake 0.5s;
+        }
+        
+        @keyframes shake {
+            0% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            50% { transform: translateX(5px); }
+            75% { transform: translateX(-5px); }
+            100% { transform: translateX(0); }
+        }
+        
+        .pixel-art {
+            image-rendering: pixelated;
+            image-rendering: -moz-crisp-edges;
+            image-rendering: crisp-edges;
+        }
+        
+        .tooltip {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .tooltip .tooltip-text {
+            visibility: hidden;
+            width: 200px;
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 5px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        .tooltip:hover .tooltip-text {
+            visibility: visible;
+            opacity: 1;
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-white font-mono min-h-screen">
+    <div class="container mx-auto px-4 py-6 max-w-md">
+        <!-- Game Header -->
+        <header class="flex justify-between items-center mb-6 fade-in">
+            <div class="flex items-center">
+                <i class="fas fa-beer text-yellow-400 text-2xl mr-2"></i>
+                <h1 class="text-2xl font-bold">Soda Tavern</h1>
+            </div>
+            <div class="flex items-center space-x-4">
+                <div class="bg-gray-800 px-3 py-1 rounded-lg flex items-center">
+                    <i class="fas fa-coins text-yellow-400 mr-1"></i>
+                    <span id="gold">100</span>
+                </div>
+                <div class="bg-gray-800 px-3 py-1 rounded-lg flex items-center">
+                    <i class="fas fa-gem text-blue-400 mr-1"></i>
+                    <span id="gems">5</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Game Area -->
+        <main>
+            <!-- Tavern Tab -->
+            <div id="tavern-tab" class="mb-6 slide-in">
+                <div class="bg-gray-800 rounded-lg p-4 mb-4">
+                    <h2 class="text-xl font-bold mb-3 flex items-center">
+                        <i class="fas fa-beer-mug-empty mr-2 text-yellow-400"></i> Tavern
+                    </h2>
+                    <p class="text-gray-300 mb-4">Recruit adventurers to fight for you while you're away!</p>
+                    
+                    <div class="grid grid-cols-3 gap-3 mb-4">
+                        <div class="bg-gray-700 p-2 rounded-lg text-center cursor-pointer hover:bg-gray-600 transition character" onclick="recruitCharacter('warrior')">
+                            <img src="https://i.imgur.com/JjQZQ9L.png" alt="Warrior" class="w-16 h-16 mx-auto mb-1 pixel-art">
+                            <div class="text-xs">Warrior</div>
+                            <div class="text-yellow-400 text-xs">50g</div>
+                        </div>
+                        <div class="bg-gray-700 p-2 rounded-lg text-center cursor-pointer hover:bg-gray-600 transition character" onclick="recruitCharacter('mage')">
+                            <img src="https://i.imgur.com/3QZQ9Lm.png" alt="Mage" class="w-16 h-16 mx-auto mb-1 pixel-art">
+                            <div class="text-xs">Mage</div>
+                            <div class="text-yellow-400 text-xs">75g</div>
+                        </div>
+                        <div class="bg-gray-700 p-2 rounded-lg text-center cursor-pointer hover:bg-gray-600 transition character" onclick="recruitCharacter('thief')">
+                            <img src="https://i.imgur.com/9jQZQ9L.png" alt="Thief" class="w-16 h-16 mx-auto mb-1 pixel-art">
+                            <div class="text-xs">Thief</div>
+                            <div class="text-yellow-400 text-xs">60g</div>
+                        </div>
+                    </div>
+                    
+                    <button id="auto-recruit-btn" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg transition flex items-center justify-center" onclick="toggleAutoRecruit()">
+                        <i class="fas fa-robot mr-2"></i> Auto-Recruit: Off
+                    </button>
+                </div>
+            </div>
+
+            <!-- Battle Tab -->
+            <div id="battle-tab" class="mb-6">
+                <div class="bg-gray-800 rounded-lg p-4">
+                    <div class="flex justify-between items-center mb-3">
+                        <h2 class="text-xl font-bold flex items-center">
+                            <i class="fas fa-swords mr-2 text-red-400"></i> Battle
+                        </h2>
+                        <div class="text-sm">
+                            Floor: <span id="floor">1</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Enemy Display -->
+                    <div class="bg-gray-700 rounded-lg p-4 mb-4 relative" id="enemy-container">
+                        <div class="flex justify-center mb-2">
+                            <img src="https://i.imgur.com/5jQZQ9L.png" alt="Enemy" class="w-24 h-24 pixel-art" id="enemy-image">
+                        </div>
+                        <div class="text-center font-bold mb-1" id="enemy-name">Goblin</div>
+                        <div class="h-2 bg-gray-600 rounded-full mb-1">
+                            <div class="h-full bg-red-500 rounded-full progress-bar" id="enemy-health-bar" style="width: 100%"></div>
+                        </div>
+                        <div class="text-xs text-right" id="enemy-health">100/100</div>
+                    </div>
+                    
+                    <!-- Party Display -->
+                    <div class="grid grid-cols-5 gap-2 mb-4" id="party-container">
+                        <!-- Party slots will be added here dynamically -->
+                        <div class="bg-gray-700 rounded-lg p-1 text-center party-slot empty-slot" data-slot="0" onclick="managePartySlot(0)">
+                            <div class="w-12 h-12 mx-auto mb-1 flex items-center justify-center text-gray-500">
+                                <i class="fas fa-plus"></i>
+                            </div>
+                        </div>
+                        <div class="bg-gray-700 rounded-lg p-1 text-center party-slot empty-slot" data-slot="1" onclick="managePartySlot(1)">
+                            <div class="w-12 h-12 mx-auto mb-1 flex items-center justify-center text-gray-500">
+                                <i class="fas fa-plus"></i>
+                            </div>
+                        </div>
+                        <div class="bg-gray-700 rounded-lg p-1 text-center party-slot empty-slot" data-slot="2" onclick="managePartySlot(2)">
+                            <div class="w-12 h-12 mx-auto mb-1 flex items-center justify-center text-gray-500">
+                                <i class="fas fa-plus"></i>
+                            </div>
+                        </div>
+                        <div class="bg-gray-700 rounded-lg p-1 text-center party-slot empty-slot" data-slot="3" onclick="managePartySlot(3)">
+                            <div class="w-12 h-12 mx-auto mb-1 flex items-center justify-center text-gray-500">
+                                <i class="fas fa-plus"></i>
+                            </div>
+                        </div>
+                        <div class="bg-gray-700 rounded-lg p-1 text-center party-slot empty-slot" data-slot="4" onclick="managePartySlot(4)">
+                            <div class="w-12 h-12 mx-auto mb-1 flex items-center justify-center text-gray-500">
+                                <i class="fas fa-plus"></i>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex space-x-2">
+                        <button id="battle-btn" class="flex-1 bg-green-600 hover:bg-green-700 text-white py-2 rounded-lg transition" onclick="startBattle()">
+                            <i class="fas fa-play mr-1"></i> Start Battle
+                        </button>
+                        <button id="auto-battle-btn" class="flex-1 bg-purple-600 hover:bg-purple-700 text-white py-2 rounded-lg transition" onclick="toggleAutoBattle()">
+                            <i class="fas fa-robot mr-1"></i> Auto: Off
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Inventory Tab -->
+            <div id="inventory-tab" class="mb-6">
+                <div class="bg-gray-800 rounded-lg p-4">
+                    <h2 class="text-xl font-bold mb-3 flex items-center">
+                        <i class="fas fa-backpack mr-2 text-blue-400"></i> Inventory
+                    </h2>
+                    
+                    <div class="grid grid-cols-4 gap-2 mb-4" id="inventory-container">
+                        <!-- Items will be added here dynamically -->
+                        <div class="bg-gray-700 p-2 rounded-lg text-center cursor-pointer hover:bg-gray-600 transition">
+                            <div class="w-12 h-12 mx-auto mb-1 flex items-center justify-center text-gray-500">
+                                <i class="fas fa-plus"></i>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="text-sm text-gray-400">
+                        <i class="fas fa-info-circle mr-1"></i> Items are automatically equipped to your party
+                    </div>
+                </div>
+            </div>
+
+            <!-- Upgrades Tab -->
+            <div id="upgrades-tab">
+                <div class="bg-gray-800 rounded-lg p-4">
+                    <h2 class="text-xl font-bold mb-3 flex items-center">
+                        <i class="fas fa-arrow-up mr-2 text-green-400"></i> Upgrades
+                    </h2>
+                    
+                    <div class="space-y-3">
+                        <div class="bg-gray-700 rounded-lg p-3 flex justify-between items-center">
+                            <div>
+                                <h3 class="font-bold">Tavern Capacity</h3>
+                                <p class="text-sm text-gray-300">Increase max adventurers from <span id="current-capacity">5</span> to <span id="next-capacity">10</span></p>
+                            </div>
+                            <button class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded-lg transition" onclick="buyUpgrade('capacity')">
+                                500g
+                            </button>
+                        </div>
+                        
+                        <div class="bg-gray-700 rounded-lg p-3 flex justify-between items-center">
+                            <div>
+                                <h3 class="font-bold">Auto-Battle Speed</h3>
+                                <p class="text-sm text-gray-300">Increase battle speed by 25%</p>
+                            </div>
+                            <button class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded-lg transition" onclick="buyUpgrade('speed')">
+                                250g
+                            </button>
+                        </div>
+                        
+                        <div class="bg-gray-700 rounded-lg p-3 flex justify-between items-center">
+                            <div>
+                                <h3 class="font-bold">Gold Find</h3>
+                                <p class="text-sm text-gray-300">Increase gold earned by 20%</p>
+                            </div>
+                            <button class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded-lg transition" onclick="buyUpgrade('gold')">
+                                300g
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Battle Log -->
+        <div id="battle-log" class="fixed bottom-0 left-0 right-0 bg-gray-800 border-t border-gray-700 p-3 max-h-40 overflow-y-auto hidden">
+            <div class="flex justify-between items-center mb-2">
+                <h3 class="font-bold">Battle Log</h3>
+                <button onclick="toggleBattleLog()" class="text-gray-400 hover:text-white">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div id="log-content" class="text-sm space-y-1"></div>
+        </div>
+    </div>
+
+    <script>
+        // Game State
+        const gameState = {
+            gold: 100,
+            gems: 5,
+            floor: 1,
+            autoRecruit: false,
+            autoBattle: false,
+            battleInterval: null,
+            recruitInterval: null,
+            party: Array(5).fill(null),
+            tavern: [],
+            inventory: [],
+            upgrades: {
+                capacity: { level: 1, cost: 500 },
+                speed: { level: 1, cost: 250 },
+                gold: { level: 1, cost: 300 }
+            },
+            currentEnemy: null,
+            isBattling: false,
+            battleSpeed: 1000
+        };
+
+        // Character Types
+        const characterTypes = {
+            warrior: {
+                name: "Warrior",
+                health: 120,
+                maxHealth: 120,
+                attack: 15,
+                defense: 10,
+                cost: 50,
+                image: "https://i.imgur.com/JjQZQ9L.png"
+            },
+            mage: {
+                name: "Mage",
+                health: 80,
+                maxHealth: 80,
+                attack: 25,
+                defense: 5,
+                cost: 75,
+                image: "https://i.imgur.com/3QZQ9Lm.png"
+            },
+            thief: {
+                name: "Thief",
+                health: 90,
+                maxHealth: 90,
+                attack: 18,
+                defense: 8,
+                cost: 60,
+                image: "https://i.imgur.com/9jQZQ9L.png"
+            }
+        };
+
+        // Enemy Types
+        const enemyTypes = [
+            { name: "Goblin", health: 100, maxHealth: 100, attack: 10, defense: 5, image: "https://i.imgur.com/5jQZQ9L.png" },
+            { name: "Skeleton", health: 120, maxHealth: 120, attack: 12, defense: 8, image: "https://i.imgur.com/7jQZQ9L.png" },
+            { name: "Orc", health: 150, maxHealth: 150, attack: 15, defense: 12, image: "https://i.imgur.com/8jQZQ9L.png" },
+            { name: "Slime", health: 80, maxHealth: 80, attack: 8, defense: 3, image: "https://i.imgur.com/6jQZQ9L.png" },
+            { name: "Troll", health: 200, maxHealth: 200, attack: 18, defense: 15, image: "https://i.imgur.com/4jQZQ9L.png" }
+        ];
+
+        // Items
+        const items = [
+            { name: "Health Potion", type: "consumable", effect: "heal", value: 30, image: "https://i.imgur.com/1jQZQ9L.png" },
+            { name: "Sword", type: "weapon", effect: "attack", value: 5, image: "https://i.imgur.com/2jQZQ9L.png" },
+            { name: "Shield", type: "armor", effect: "defense", value: 5, image: "https://i.imgur.com/0jQZQ9L.png" }
+        ];
+
+        // Initialize the game
+        function initGame() {
+            updateUI();
+            generateNewEnemy();
+        }
+
+        // Update all UI elements
+        function updateUI() {
+            // Update resources
+            document.getElementById('gold').textContent = gameState.gold;
+            document.getElementById('gems').textContent = gameState.gems;
+            document.getElementById('floor').textContent = gameState.floor;
+            
+            // Update party display
+            updatePartyUI();
+            
+            // Update tavern display
+            updateTavernUI();
+            
+            // Update enemy display
+            if (gameState.currentEnemy) {
+                document.getElementById('enemy-name').textContent = gameState.currentEnemy.name;
+                document.getElementById('enemy-image').src = gameState.currentEnemy.image;
+                const healthPercent = (gameState.currentEnemy.health / gameState.currentEnemy.maxHealth) * 100;
+                document.getElementById('enemy-health-bar').style.width = `${healthPercent}%`;
+                document.getElementById('enemy-health').textContent = `${gameState.currentEnemy.health}/${gameState.currentEnemy.maxHealth}`;
+            }
+            
+            // Update upgrades
+            document.getElementById('current-capacity').textContent = gameState.party.length;
+            document.getElementById('next-capacity').textContent = gameState.party.length + 5;
+        }
+
+        // Update party UI
+        function updatePartyUI() {
+            const partyContainer = document.getElementById('party-container');
+            partyContainer.innerHTML = '';
+            
+            for (let i = 0; i < gameState.party.length; i++) {
+                const slot = document.createElement('div');
+                slot.className = 'bg-gray-700 rounded-lg p-1 text-center party-slot';
+                slot.dataset.slot = i;
+                slot.onclick = () => managePartySlot(i);
+                
+                if (gameState.party[i]) {
+                    const character = gameState.party[i];
+                    const healthPercent = (character.health / character.maxHealth) * 100;
+                    
+                    slot.innerHTML = `
+                        <img src="${character.image}" alt="${character.name}" class="w-12 h-12 mx-auto mb-1 pixel-art">
+                        <div class="text-xs mb-1">${character.name}</div>
+                        <div class="h-1 bg-gray-600 rounded-full mb-1">
+                            <div class="h-full bg-green-500 rounded-full progress-bar" style="width: ${healthPercent}%"></div>
+                        </div>
+                        <div class="text-xs">${character.health}/${character.maxHealth}</div>
+                    `;
+                    slot.classList.remove('empty-slot');
+                } else {
+                    slot.innerHTML = `
+                        <div class="w-12 h-12 mx-auto mb-1 flex items-center justify-center text-gray-500">
+                            <i class="fas fa-plus"></i>
+                        </div>
+                    `;
+                    slot.classList.add('empty-slot');
+                }
+                
+                partyContainer.appendChild(slot);
+            }
+        }
+
+        // Update tavern UI
+        function updateTavernUI() {
+            // In a real game, you'd show characters waiting in the tavern
+        }
+
+        // Recruit a character
+        function recruitCharacter(type) {
+            const character = characterTypes[type];
+            
+            if (gameState.gold >= character.cost) {
+                gameState.gold -= character.cost;
+                
+                // Add to tavern (in a real game, you'd have a tavern with waiting characters)
+                // For now, we'll try to add directly to party if there's space
+                const emptySlot = gameState.party.findIndex(slot => slot === null);
+                
+                if (emptySlot !== -1) {
+                    // Clone the character to avoid reference issues
+                    const newCharacter = JSON.parse(JSON.stringify(character));
+                    gameState.party[emptySlot] = newCharacter;
+                    addToLog(`Recruited a ${newCharacter.name} to your party!`);
+                } else {
+                    gameState.tavern.push(JSON.parse(JSON.stringify(character)));
+                    addToLog(`Recruited a ${character.name} to the tavern (party full).`);
+                }
+                
+                updateUI();
+            } else {
+                addToLog("Not enough gold to recruit this character!");
+                document.getElementById('tavern-tab').classList.add('shake');
+                setTimeout(() => {
+                    document.getElementById('tavern-tab').classList.remove('shake');
+                }, 500);
+            }
+        }
+
+        // Toggle auto recruit
+        function toggleAutoRecruit() {
+            gameState.autoRecruit = !gameState.autoRecruit;
+            const btn = document.getElementById('auto-recruit-btn');
+            
+            if (gameState.autoRecruit) {
+                btn.innerHTML = '<i class="fas fa-robot mr-2"></i> Auto-Recruit: On';
+                btn.classList.remove('bg-blue-600');
+                btn.classList.add('bg-green-600');
+                
+                // Start auto recruit interval
+                gameState.recruitInterval = setInterval(() => {
+                    if (gameState.gold >= 50) { // Enough for cheapest character
+                        // Randomly recruit a character
+                        const types = Object.keys(characterTypes);
+                        const randomType = types[Math.floor(Math.random() * types.length)];
+                        recruitCharacter(randomType);
+                    }
+                }, 5000);
+            } else {
+                btn.innerHTML = '<i class="fas fa-robot mr-2"></i> Auto-Recruit: Off';
+                btn.classList.remove('bg-green-600');
+                btn.classList.add('bg-blue-600');
+                
+                // Clear auto recruit interval
+                if (gameState.recruitInterval) {
+                    clearInterval(gameState.recruitInterval);
+                    gameState.recruitInterval = null;
+                }
+            }
+        }
+
+        // Manage party slot
+        function managePartySlot(slotIndex) {
+            if (gameState.party[slotIndex]) {
+                // Character is in this slot - show options (heal, dismiss, etc.)
+                const character = gameState.party[slotIndex];
+                addToLog(`Selected ${character.name} in slot ${slotIndex + 1}.`);
+                
+                // In a full game, you'd show a menu with options
+            } else {
+                // Empty slot - try to fill from tavern
+                if (gameState.tavern.length > 0) {
+                    gameState.party[slotIndex] = gameState.tavern.shift();
+                    addToLog(`Moved character from tavern to party slot ${slotIndex + 1}.`);
+                    updateUI();
+                } else {
+                    addToLog("No characters available in the tavern to recruit.");
+                }
+            }
+        }
+
+        // Generate a new enemy
+        function generateNewEnemy() {
+            // Scale enemy stats with floor
+            const floorModifier = 1 + (gameState.floor - 1) * 0.2;
+            
+            const baseEnemy = enemyTypes[Math.floor(Math.random() * enemyTypes.length)];
+            gameState.currentEnemy = {
+                ...baseEnemy,
+                health: Math.floor(baseEnemy.health * floorModifier),
+                maxHealth: Math.floor(baseEnemy.maxHealth * floorModifier),
+                attack: Math.floor(baseEnemy.attack * floorModifier),
+                defense: Math.floor(baseEnemy.defense * floorModifier)
+            };
+            
+            updateUI();
+        }
+
+        // Start battle
+        function startBattle() {
+            if (gameState.isBattling) return;
+            
+            // Check if party has at least one member
+            const hasPartyMembers = gameState.party.some(slot => slot !== null && slot.health > 0);
+            if (!hasPartyMembers) {
+                addToLog("You need at least one alive party member to battle!");
+                return;
+            }
+            
+            gameState.isBattling = true;
+            const battleBtn = document.getElementById('battle-btn');
+            battleBtn.disabled = true;
+            battleBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-1"></i> Battling...';
+            
+            // Start battle loop
+            battleLoop();
+            
+            // If not auto-battling, enable button after one round
+            if (!gameState.autoBattle) {
+                setTimeout(() => {
+                    if (gameState.currentEnemy.health > 0) {
+                        endBattle(false, true); // partial end - just enable button
+                    }
+                }, gameState.battleSpeed);
+            }
+        }
+
+        // Battle loop
+        function battleLoop() {
+            if (!gameState.currentEnemy || gameState.currentEnemy.health <= 0) {
+                endBattle(true);
+                return;
+            }
+            
+            // Check if all party members are dead
+            const alivePartyMembers = gameState.party.filter(member => member && member.health > 0);
+            if (alivePartyMembers.length === 0) {
+                endBattle(false);
+                return;
+            }
+            
+            // Party attacks
+            for (let i = 0; i < gameState.party.length; i++) {
+                const member = gameState.party[i];
+                if (member && member.health > 0) {
+                    setTimeout(() => {
+                        attackEnemy(member);
+                        
+                        // Visual feedback
+                        const slot = document.querySelector(`.party-slot[data-slot="${i}"]`);
+                        if (slot) slot.classList.add('character-attack');
+                        setTimeout(() => {
+                            if (slot) slot.classList.remove('character-attack');
+                        }, 300);
+                    }, i * 200); // Stagger attacks for better visibility
+                }
+            }
+            
+            // Enemy attacks after party is done
+            setTimeout(() => {
+                if (gameState.currentEnemy && gameState.currentEnemy.health > 0) {
+                    const randomAliveMemberIndex = Math.floor(Math.random() * alivePartyMembers.length);
+                    const targetMember = alivePartyMembers[randomAliveMemberIndex];
+                    attackPartyMember(targetMember);
+                    
+                    // Visual feedback
+                    document.getElementById('enemy-container').classList.add('enemy-attack');
+                    setTimeout(() => {
+                        document.getElementById('enemy-container').classList.remove('enemy-attack');
+                    }, 300);
+                }
+                
+                // Continue battle if auto-battle is on
+                if (gameState.autoBattle && gameState.isBattling) {
+                    gameState.battleInterval = setTimeout(battleLoop, gameState.battleSpeed);
+                }
+            }, gameState.party.length * 200 + 300); // Wait for all party attacks to complete
+        }
+
+        // Attack enemy
+        function attackEnemy(attacker) {
+            if (!gameState.currentEnemy) return;
+            
+            const damage = Math.max(1, attacker.attack - gameState.currentEnemy.defense / 2);
+            gameState.currentEnemy.health -= damage;
+            
+            // Show damage popup
+            showDamagePopup(damage, document.getElementById('enemy-container'), true);
+            
+            addToLog(`${attacker.name} hits ${gameState.currentEnemy.name} for ${damage} damage!`);
+            
+            // Check if enemy is defeated
+            if (gameState.currentEnemy.health <= 0) {
+                gameState.currentEnemy.health = 0;
+                addToLog(`${gameState.currentEnemy.name} was defeated!`);
+                
+                // Award gold
+                const goldEarned = Math.floor(20 + Math.random() * 30) * (1 + (gameState.upgrades.gold.level - 1) * 0.2);
+                gameState.gold += Math.floor(goldEarned);
+                addToLog(`Earned ${Math.floor(goldEarned)} gold!`);
+                
+                // Chance to drop item
+                if (Math.random() < 0.3) {
+                    const randomItem = items[Math.floor(Math.random() * items.length)];
+                    gameState.inventory.push(randomItem);
+                    addToLog(`Found a ${randomItem.name}!`);
+                }
+                
+                // Increase floor
+                gameState.floor++;
+                
+                // Generate new enemy
+                setTimeout(() => {
+                    generateNewEnemy();
+                    updateUI();
+                }, 500);
+            }
+            
+            updateUI();
+        }
+
+        // Attack party member
+        function attackPartyMember(member) {
+            if (!gameState.currentEnemy) return;
+            
+            const damage = Math.max(1, gameState.currentEnemy.attack - member.defense / 2);
+            member.health -= damage;
+            
+            // Show damage popup
+            const slotIndex = gameState.party.findIndex(m => m === member);
+            const slot = document.querySelector(`.party-slot[data-slot="${slotIndex}"]`);
+            if (slot) showDamagePopup(damage, slot, false);
+            
+            addToLog(`${gameState.currentEnemy.name} hits ${member.name} for ${damage} damage!`);
+            
+            // Check if member is defeated
+            if (member.health <= 0) {
+                member.health = 0;
+                addToLog(`${member.name} was defeated!`);
+                
+                // Remove from party if dead
+                setTimeout(() => {
+                    const memberIndex = gameState.party.findIndex(m => m === member);
+                    if (memberIndex !== -1) {
+                        gameState.party[memberIndex] = null;
+                        updateUI();
+                    }
+                }, 1000);
+            }
+            
+            updateUI();
+        }
+
+        // Show damage popup
+        function showDamagePopup(amount, parentElement, isPlayerAttack) {
+            const popup = document.createElement('div');
+            popup.className = 'damage-popup';
+            popup.textContent = `-${amount}`;
+            popup.style.color = isPlayerAttack ? 'red' : 'white';
+            
+            // Position randomly within the parent element
+            const rect = parentElement.getBoundingClientRect();
+            const x = Math.random() * (rect.width - 30);
+            const y = Math.random() * (rect.height - 20);
+            
+            popup.style.left = `${x}px`;
+            popup.style.top = `${y}px`;
+            
+            parentElement.appendChild(popup);
+            
+            // Remove after animation
+            setTimeout(() => {
+                popup.remove();
+            }, 1000);
+        }
+
+        // End battle
+        function endBattle(victory, partial = false) {
+            gameState.isBattling = false;
+            const battleBtn = document.getElementById('battle-btn');
+            
+            if (victory) {
+                addToLog("Battle won! Preparing for next floor...");
+            } else if (!partial) {
+                addToLog("Party defeated! Returning to tavern...");
+                
+                // Reset party health for next battle
+                gameState.party.forEach((member, index) => {
+                    if (member) {
+                        gameState.party[index] = null;
+                    }
+                });
+            }
+            
+            if (!partial) {
+                // Clear any ongoing battle intervals
+                if (gameState.battleInterval) {
+                    clearInterval(gameState.battleInterval);
+                    gameState.battleInterval = null;
+                }
+            }
+            
+            battleBtn.disabled = false;
+            battleBtn.innerHTML = '<i class="fas fa-play mr-1"></i> Start Battle';
+            
+            updateUI();
+        }
+
+        // Toggle auto battle
+        function toggleAutoBattle() {
+            gameState.autoBattle = !gameState.autoBattle;
+            const btn = document.getElementById('auto-battle-btn');
+            
+            if (gameState.autoBattle) {
+                btn.innerHTML = '<i class="fas fa-robot mr-1"></i> Auto: On';
+                btn.classList.remove('bg-purple-600');
+                btn.classList.add('bg-green-600');
+                
+                // Start auto battle if not already battling
+                if (!gameState.isBattling) {
+                    startBattle();
+                }
+            } else {
+                btn.innerHTML = '<i class="fas fa-robot mr-1"></i> Auto: Off';
+                btn.classList.remove('bg-green-600');
+                btn.classList.add('bg-purple-600');
+            }
+        }
+
+        // Buy upgrade
+        function buyUpgrade(type) {
+            const upgrade = gameState.upgrades[type];
+            
+            if (gameState.gold >= upgrade.cost) {
+                gameState.gold -= upgrade.cost;
+                upgrade.level++;
+                upgrade.cost = Math.floor(upgrade.cost * 1.5);
+                
+                // Apply upgrade effects
+                if (type === 'speed') {
+                    gameState.battleSpeed = Math.max(200, 1000 - (upgrade.level - 1) * 200);
+                }
+                
+                addToLog(`Purchased ${type} upgrade (now level ${upgrade.level})!`);
+                updateUI();
+            } else {
+                addToLog("Not enough gold for this upgrade!");
+                document.getElementById('upgrades-tab').classList.add('shake');
+                setTimeout(() => {
+                    document.getElementById('upgrades-tab').classList.remove('shake');
+                }, 500);
+            }
+        }
+
+        // Add message to battle log
+        function addToLog(message) {
+            const logContent = document.getElementById('log-content');
+            const entry = document.createElement('div');
+            entry.className = 'text-gray-300';
+            entry.textContent = message;
+            logContent.appendChild(entry);
+            
+            // Auto-scroll to bottom
+            logContent.scrollTop = logContent.scrollHeight;
+            
+            // Show log if hidden
+            document.getElementById('battle-log').classList.remove('hidden');
+        }
+
+        // Toggle battle log visibility
+        function toggleBattleLog() {
+            const log = document.getElementById('battle-log');
+            log.classList.toggle('hidden');
+        }
+
+        // Initialize the game when page loads
+        window.onload = initGame;
+    </script>
+</body>
+</html>
