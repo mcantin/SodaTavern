@@ -443,6 +443,39 @@
             // Update upgrades
             document.getElementById('current-capacity').textContent = gameState.party.length;
             document.getElementById('next-capacity').textContent = gameState.party.length + 5;
+            
+            // Update upgrade menu if open
+            const menu = document.querySelector('.fixed');
+            if (menu) {
+                const goldDisplay = menu.querySelector('#upgrade-gold');
+                if (goldDisplay) {
+                    goldDisplay.textContent = gameState.gold;
+                }
+                // Update button states
+                const characterIndex = Array.from(menu.querySelectorAll('.upgrade-btn')).map(btn => 
+                    parseInt(btn.getAttribute('onclick').match(/upgradeStat\((\d+)/)[1])
+                )[0];
+                if (!isNaN(characterIndex) && gameState.party[characterIndex]) {
+                    updateUpgradeButtonStates(gameState.party[characterIndex], menu);
+                }
+            }
+        }
+
+        // Update upgrade button states based on gold
+        function updateUpgradeButtonStates(character, menu) {
+            const buttons = menu.querySelectorAll('.upgrade-btn');
+            buttons.forEach(btn => {
+                const cost = parseInt(btn.textContent.match(/\((\d+)g\)/)[1]);
+                if (gameState.gold < cost) {
+                    btn.classList.add('opacity-50', 'cursor-not-allowed');
+                    btn.classList.remove('hover:bg-blue-700');
+                    btn.disabled = true;
+                } else {
+                    btn.classList.remove('opacity-50', 'cursor-not-allowed');
+                    btn.classList.add('hover:bg-blue-700');
+                    btn.disabled = false;
+                }
+            });
         }
 
         // Update party UI
@@ -491,6 +524,18 @@
             const character = gameState.party[slotIndex];
             if (!character) return;
             
+            // Initialize upgrades object if it doesn't exist
+            if (!character.upgrades) {
+                character.upgrades = {
+                    attack: { level: 0, cost: 50, increment: 5 },
+                    defense: { level: 0, cost: 40, increment: 3 },
+                    maxHealth: { level: 0, cost: 60, increment: 20 },
+                    attackSpeed: { level: 0, cost: 70, increment: -100 },
+                    dodgeRate: { level: 0, cost: 80, increment: 0.05 },
+                    critChance: { level: 0, cost: 90, increment: 0.05 }
+                };
+            }
+            
             // Create upgrade menu
             const menu = document.createElement('div');
             menu.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
@@ -503,16 +548,22 @@
                         </button>
                     </div>
                     
+                    <div class="mb-4 p-2 bg-gray-700 rounded flex items-center">
+                        <i class="fas fa-coins text-yellow-400 mr-2"></i>
+                        <span>Gold: <span id="upgrade-gold">${gameState.gold}</span></span>
+                    </div>
+                    
                     <div class="space-y-3">
                         <div class="bg-gray-700 rounded-lg p-3">
                             <div class="flex justify-between items-center">
                                 <div>
                                     <h4 class="font-bold">Attack Power</h4>
-                                    <p class="text-sm text-gray-300">Current: ${character.attack}</p>
+                                    <p class="text-sm text-gray-300">Current: ${character.attack} (Lvl ${character.upgrades.attack.level})</p>
                                 </div>
-                                <button class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded-lg text-sm" 
-                                        onclick="upgradeStat(${slotIndex}, 'attack', 5, 50)">
-                                    +5 (50g)
+                                <button class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded-lg text-sm upgrade-btn" 
+                                        onclick="upgradeStat(${slotIndex}, 'attack', 5, ${character.upgrades.attack.cost})"
+                                        data-type="attack">
+                                    +5 (${character.upgrades.attack.cost}g)
                                 </button>
                             </div>
                         </div>
@@ -521,11 +572,12 @@
                             <div class="flex justify-between items-center">
                                 <div>
                                     <h4 class="font-bold">Defense</h4>
-                                    <p class="text-sm text-gray-300">Current: ${character.defense}</p>
+                                    <p class="text-sm text-gray-300">Current: ${character.defense} (Lvl ${character.upgrades.defense.level})</p>
                                 </div>
-                                <button class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded-lg text-sm" 
-                                        onclick="upgradeStat(${slotIndex}, 'defense', 3, 40)">
-                                    +3 (40g)
+                                <button class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded-lg text-sm upgrade-btn" 
+                                        onclick="upgradeStat(${slotIndex}, 'defense', 3, ${character.upgrades.defense.cost})"
+                                        data-type="defense">
+                                    +3 (${character.upgrades.defense.cost}g)
                                 </button>
                             </div>
                         </div>
@@ -534,11 +586,12 @@
                             <div class="flex justify-between items-center">
                                 <div>
                                     <h4 class="font-bold">Hit Points</h4>
-                                    <p class="text-sm text-gray-300">Current: ${character.maxHealth}</p>
+                                    <p class="text-sm text-gray-300">Current: ${character.maxHealth} (Lvl ${character.upgrades.maxHealth.level})</p>
                                 </div>
-                                <button class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded-lg text-sm" 
-                                        onclick="upgradeStat(${slotIndex}, 'maxHealth', 20, 60)">
-                                    +20 (60g)
+                                <button class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded-lg text-sm upgrade-btn" 
+                                        onclick="upgradeStat(${slotIndex}, 'maxHealth', 20, ${character.upgrades.maxHealth.cost})"
+                                        data-type="maxHealth">
+                                    +20 (${character.upgrades.maxHealth.cost}g)
                                 </button>
                             </div>
                         </div>
@@ -547,11 +600,12 @@
                             <div class="flex justify-between items-center">
                                 <div>
                                     <h4 class="font-bold">Attack Speed</h4>
-                                    <p class="text-sm text-gray-300">Current: ${character.attackSpeed}ms</p>
+                                    <p class="text-sm text-gray-300">Current: ${character.attackSpeed}ms (Lvl ${character.upgrades.attackSpeed.level})</p>
                                 </div>
-                                <button class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded-lg text-sm" 
-                                        onclick="upgradeStat(${slotIndex}, 'attackSpeed', -100, 70)">
-                                    +100% (70g)
+                                <button class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded-lg text-sm upgrade-btn" 
+                                        onclick="upgradeStat(${slotIndex}, 'attackSpeed', -100, ${character.upgrades.attackSpeed.cost})"
+                                        data-type="attackSpeed">
+                                    +100% (${character.upgrades.attackSpeed.cost}g)
                                 </button>
                             </div>
                         </div>
@@ -560,11 +614,12 @@
                             <div class="flex justify-between items-center">
                                 <div>
                                     <h4 class="font-bold">Dodge Rate</h4>
-                                    <p class="text-sm text-gray-300">Current: ${(character.dodgeRate * 100).toFixed(1)}%</p>
+                                    <p class="text-sm text-gray-300">Current: ${(character.dodgeRate * 100).toFixed(1)}% (Lvl ${character.upgrades.dodgeRate.level})</p>
                                 </div>
-                                <button class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded-lg text-sm" 
-                                        onclick="upgradeStat(${slotIndex}, 'dodgeRate', 0.05, 80)">
-                                    +5% (80g)
+                                <button class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded-lg text-sm upgrade-btn" 
+                                        onclick="upgradeStat(${slotIndex}, 'dodgeRate', 0.05, ${character.upgrades.dodgeRate.cost})"
+                                        data-type="dodgeRate">
+                                    +5% (${character.upgrades.dodgeRate.cost}g)
                                 </button>
                             </div>
                         </div>
@@ -573,11 +628,12 @@
                             <div class="flex justify-between items-center">
                                 <div>
                                     <h4 class="font-bold">Critical Chance</h4>
-                                    <p class="text-sm text-gray-300">Current: ${(character.critChance * 100).toFixed(1)}%</p>
+                                    <p class="text-sm text-gray-300">Current: ${(character.critChance * 100).toFixed(1)}% (Lvl ${character.upgrades.critChance.level})</p>
                                 </div>
-                                <button class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded-lg text-sm" 
-                                        onclick="upgradeStat(${slotIndex}, 'critChance', 0.05, 90)">
-                                    +5% (90g)
+                                <button class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded-lg text-sm upgrade-btn" 
+                                        onclick="upgradeStat(${slotIndex}, 'critChance', 0.05, ${character.upgrades.critChance.cost})"
+                                        data-type="critChance">
+                                    +5% (${character.upgrades.critChance.cost}g)
                                 </button>
                             </div>
                         </div>
@@ -586,16 +642,20 @@
             `;
             
             document.body.appendChild(menu);
+            
+            // Update button states based on gold
+            updateUpgradeButtonStates(character, menu);
         }
 
         // Upgrade character stat
         function upgradeStat(slotIndex, stat, value, cost) {
             const character = gameState.party[slotIndex];
-            if (!character) return;
+            if (!character || !character.upgrades) return;
             
             if (gameState.gold >= cost) {
                 gameState.gold -= cost;
                 
+                // Update character stat
                 if (stat === 'maxHealth') {
                     character.maxHealth += value;
                     character.health += value; // Heal when increasing max health
@@ -607,12 +667,50 @@
                     character[stat] += value;
                 }
                 
-                addToLog(`Upgraded ${character.name}'s ${stat} for ${cost} gold!`);
+                // Update upgrade info
+                const upgrade = character.upgrades[stat];
+                upgrade.level++;
+                upgrade.cost = Math.floor(upgrade.cost * 1.5); // Increase cost for next level
+                
+                addToLog(`Upgraded ${character.name}'s ${stat} to level ${upgrade.level} for ${cost} gold!`);
                 updateUI();
                 
-                // Close upgrade menu
+                // Update upgrade menu if still open
                 const menu = document.querySelector('.fixed');
-                if (menu) menu.remove();
+                if (menu) {
+                    // Update gold display
+                    menu.querySelector('#upgrade-gold').textContent = gameState.gold;
+                    
+                    // Update this specific upgrade button
+                    const btn = menu.querySelector(`.upgrade-btn[data-type="${stat}"]`);
+                    if (btn) {
+                        btn.innerHTML = `+${upgrade.increment} (${upgrade.cost}g)`;
+                        btn.setAttribute('onclick', `upgradeStat(${slotIndex}, '${stat}', ${upgrade.increment}, ${upgrade.cost})`);
+                    }
+                    
+                    // Update stat display
+                    const statDisplays = menu.querySelectorAll('p.text-sm');
+                    for (let display of statDisplays) {
+                        if (display.textContent.includes(stat)) {
+                            if (stat === 'attack') {
+                                display.innerHTML = `Current: ${character.attack} (Lvl ${upgrade.level})`;
+                            } else if (stat === 'defense') {
+                                display.innerHTML = `Current: ${character.defense} (Lvl ${upgrade.level})`;
+                            } else if (stat === 'maxHealth') {
+                                display.innerHTML = `Current: ${character.maxHealth} (Lvl ${upgrade.level})`;
+                            } else if (stat === 'attackSpeed') {
+                                display.innerHTML = `Current: ${character.attackSpeed}ms (Lvl ${upgrade.level})`;
+                            } else if (stat === 'dodgeRate') {
+                                display.innerHTML = `Current: ${(character.dodgeRate * 100).toFixed(1)}% (Lvl ${upgrade.level})`;
+                            } else if (stat === 'critChance') {
+                                display.innerHTML = `Current: ${(character.critChance * 100).toFixed(1)}% (Lvl ${upgrade.level})`;
+                            }
+                        }
+                    }
+                    
+                    // Update all button states
+                    updateUpgradeButtonStates(character, menu);
+                }
             } else {
                 addToLog("Not enough gold for this upgrade!");
             }
