@@ -146,21 +146,26 @@
                     </h2>
                     <p class="text-gray-300 mb-4">Recruit adventurers to fight for you while you're away!</p>
                     
-                    <div class="grid grid-cols-3 gap-3 mb-4">
+                    <div class="grid grid-cols-4 gap-3 mb-4">
                         <div class="bg-gray-700 p-2 rounded-lg text-center cursor-pointer hover:bg-gray-600 transition character" onclick="recruitCharacter('warrior')">
-                            <img src="https://i.imgur.com/JjQZQ9L.png" alt="Warrior" class="w-16 h-16 mx-auto mb-1 pixel-art">
+                            <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='30' r='20' fill='%234169E1'/%3E%3Crect x='30' y='50' width='40' height='40' fill='%234169E1'/%3E%3Crect x='20' y='55' width='60' height='10' fill='%234169E1'/%3E%3Ccircle cx='40' cy='25' r='5' fill='white'/%3E%3Ccircle cx='60' cy='25' r='5' fill='white'/%3E%3C/svg%3E" alt="Warrior" class="w-16 h-16 mx-auto mb-1 pixel-art">
                             <div class="text-xs">Warrior</div>
                             <div class="text-yellow-400 text-xs">50g</div>
                         </div>
                         <div class="bg-gray-700 p-2 rounded-lg text-center cursor-pointer hover:bg-gray-600 transition character" onclick="recruitCharacter('mage')">
-                            <img src="https://i.imgur.com/3QZQ9Lm.png" alt="Mage" class="w-16 h-16 mx-auto mb-1 pixel-art">
+                            <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='30' r='20' fill='%239370DB'/%3E%3Crect x='35' y='50' width='30' height='40' fill='%239370DB'/%3E%3Ccircle cx='40' cy='25' r='5' fill='white'/%3E%3Ccircle cx='60' cy='25' r='5' fill='white'/%3E%3C/svg%3E" alt="Mage" class="w-16 h-16 mx-auto mb-1 pixel-art">
                             <div class="text-xs">Mage</div>
                             <div class="text-yellow-400 text-xs">75g</div>
                         </div>
                         <div class="bg-gray-700 p-2 rounded-lg text-center cursor-pointer hover:bg-gray-600 transition character" onclick="recruitCharacter('thief')">
-                            <img src="https://i.imgur.com/9jQZQ9L.png" alt="Thief" class="w-16 h-16 mx-auto mb-1 pixel-art">
+                            <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='30' r='20' fill='%232F4F4F'/%3E%3Crect x='30' y='50' width='40' height='40' fill='%232F4F4F'/%3E%3Ccircle cx='40' cy='25' r='5' fill='white'/%3E%3Ccircle cx='60' cy='25' r='5' fill='white'/%3E%3C/svg%3E" alt="Thief" class="w-16 h-16 mx-auto mb-1 pixel-art">
                             <div class="text-xs">Thief</div>
                             <div class="text-yellow-400 text-xs">60g</div>
+                        </div>
+                        <div class="bg-gray-700 p-2 rounded-lg text-center cursor-pointer hover:bg-gray-600 transition character" onclick="recruitCharacter('medic')">
+                            <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='30' r='20' fill='%23FF6347'/%3E%3Crect x='35' y='50' width='30' height='40' fill='%23FF6347'/%3E%3Ccircle cx='40' cy='25' r='5' fill='white'/%3E%3Ccircle cx='60' cy='25' r='5' fill='white'/%3E%3C/svg%3E" alt="Medic" class="w-16 h-16 mx-auto mb-1 pixel-art">
+                            <div class="text-xs">Medic</div>
+                            <div class="text-yellow-400 text-xs">70g</div>
                         </div>
                     </div>
                     
@@ -343,7 +348,10 @@
                 attack: 15,
                 defense: 10,
                 cost: 50,
-                image: "https://i.imgur.com/JjQZQ9L.png"
+                attackSpeed: 1000,
+                dodgeRate: 0.05,
+                critChance: 0.1,
+                image: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='30' r='20' fill='%234169E1'/%3E%3Crect x='30' y='50' width='40' height='40' fill='%234169E1'/%3E%3Crect x='20' y='55' width='60' height='10' fill='%234169E1'/%3E%3Ccircle cx='40' cy='25' r='5' fill='white'/%3E%3Ccircle cx='60' cy='25' r='5' fill='white'/%3E%3C/svg%3E"
             },
             mage: {
                 name: "Mage",
@@ -352,7 +360,10 @@
                 attack: 25,
                 defense: 5,
                 cost: 75,
-                image: "https://i.imgur.com/3QZQ9Lm.png"
+                attackSpeed: 1200,
+                dodgeRate: 0.08,
+                critChance: 0.15,
+                image: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='30' r='20' fill='%239370DB'/%3E%3Crect x='35' y='50' width='30' height='40' fill='%239370DB'/%3E%3Ccircle cx='40' cy='25' r='5' fill='white'/%3E%3Ccircle cx='60' cy='25' r='5' fill='white'/%3E%3C/svg%3E"
             },
             thief: {
                 name: "Thief",
@@ -361,17 +372,34 @@
                 attack: 18,
                 defense: 8,
                 cost: 60,
-                image: "https://i.imgur.com/9jQZQ9L.png"
+                attackSpeed: 800,
+                dodgeRate: 0.15,
+                critChance: 0.2,
+                image: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='30' r='20' fill='%232F4F4F'/%3E%3Crect x='30' y='50' width='40' height='40' fill='%232F4F4F'/%3E%3Ccircle cx='40' cy='25' r='5' fill='white'/%3E%3Ccircle cx='60' cy='25' r='5' fill='white'/%3E%3C/svg%3E"
+            },
+            medic: {
+                name: "Medic",
+                health: 100,
+                maxHealth: 100,
+                attack: 8,
+                defense: 6,
+                cost: 70,
+                attackSpeed: 1500,
+                dodgeRate: 0.03,
+                critChance: 0.05,
+                image: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='30' r='20' fill='%23FF6347'/%3E%3Crect x='35' y='50' width='30' height='40' fill='%23FF6347'/%3E%3Ccircle cx='40' cy='25' r='5' fill='white'/%3E%3Ccircle cx='60' cy='25' r='5' fill='white'/%3E%3C/svg%3E"
             }
         };
 
-        // Enemy Types
+        // Enemy Types with levels
         const enemyTypes = [
-            { name: "Goblin", health: 100, maxHealth: 100, attack: 10, defense: 5, image: "https://i.imgur.com/5jQZQ9L.png" },
-            { name: "Skeleton", health: 120, maxHealth: 120, attack: 12, defense: 8, image: "https://i.imgur.com/7jQZQ9L.png" },
-            { name: "Orc", health: 150, maxHealth: 150, attack: 15, defense: 12, image: "https://i.imgur.com/8jQZQ9L.png" },
-            { name: "Slime", health: 80, maxHealth: 80, attack: 8, defense: 3, image: "https://i.imgur.com/6jQZQ9L.png" },
-            { name: "Troll", health: 200, maxHealth: 200, attack: 18, defense: 15, image: "https://i.imgur.com/4jQZQ9L.png" }
+            { name: "Rat", level: 1, health: 50, maxHealth: 50, attack: 8, defense: 2, image: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='40' fill='%238B4513'/%3E%3Ccircle cx='35' cy='40' r='5' fill='black'/%3E%3Ccircle cx='65' cy='40' r='5' fill='black'/%3E%3Cpath d='M40,65 Q50,75 60,65' stroke='black' stroke-width='3' fill='none'/%3E%3C/svg%3E" },
+            { name: "Goblin", level: 2, health: 80, maxHealth: 80, attack: 12, defense: 5, image: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='40' r='25' fill='%23228B22'/%3E%3Crect x='30' y='60' width='40' height='30' fill='%23228B22'/%3E%3Ccircle cx='40' cy='35' r='5' fill='red'/%3E%3Ccircle cx='60' cy='35' r='5' fill='red'/%3E%3Cpath d='M45,50 Q50,55 55,50' stroke='black' stroke-width='2' fill='none'/%3E%3C/svg%3E" },
+            { name: "Wolf", level: 3, health: 120, maxHealth: 120, attack: 15, defense: 8, image: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M20,50 Q40,30 60,40 Q80,50 90,60 Q80,70 60,65 Q40,70 20,50' fill='%23808080'/%3E%3Ccircle cx='70' cy='45' r='3' fill='black'/%3E%3Cpath d='M30,45 Q35,40 40,45' stroke='black' stroke-width='2' fill='none'/%3E%3C/svg%3E" },
+            { name: "Orc", level: 4, health: 160, maxHealth: 160, attack: 20, defense: 12, image: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='35' r='20' fill='%2332CD32'/%3E%3Crect x='30' y='50' width='40' height='40' fill='%2332CD32'/%3E%3Crect x='20' y='40' width='10' height='30' fill='%238B4513'/%3E%3Crect x='70' y='40' width='10' height='30' fill='%238B4513'/%3E%3Ccircle cx='45' cy='30' r='3' fill='red'/%3E%3Ccircle cx='55' cy='30' r='3' fill='red'/%3E%3C/svg%3E" },
+            { name: "Skeleton Knight", level: 5, health: 200, maxHealth: 200, attack: 25, defense: 15, image: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='30' r='15' fill='white'/%3E%3Crect x='35' y='40' width='30' height='40' fill='white'/%3E%3Crect x='25' y='45' width='50' height='5' fill='white'/%3E%3Crect x='30' y='50' width='40' height='30' fill='white'/%3E%3Ccircle cx='45' cy='25' r='2' fill='black'/%3E%3Ccircle cx='55' cy='25' r='2' fill='black'/%3E%3C/svg%3E" },
+            { name: "Minotaur", level: 6, health: 250, maxHealth: 250, attack: 30, defense: 18, image: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='30' r='20' fill='%23CD853F'/%3E%3Crect x='30' y='45' width='40' height='40' fill='%23CD853F'/%3E%3Cpath d='M30,30 Q20,20 25,10 Q30,5 35,10 Q40,5 45,10 Q50,5 55,10 Q60,5 65,10 Q70,20 60,30' fill='%23CD853F'/%3E%3Ccircle cx='40' cy='25' r='3' fill='black'/%3E%3Ccircle cx='60' cy='25' r='3' fill='black'/%3E%3C/svg%3E" },
+            { name: "Dragon", level: 7, health: 350, maxHealth: 350, attack: 40, defense: 25, image: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M20,50 Q40,30 60,40 Q80,50 90,60 Q80,70 60,65 Q40,70 20,50' fill='%23FF0000'/%3E%3Ccircle cx='70' cy='45' r='5' fill='yellow'/%3E%3Cpath d='M30,45 Q35,40 40,45' stroke='black' stroke-width='2' fill='none'/%3E%3C/svg%3E" }
         ];
 
         // Items
@@ -385,6 +413,9 @@
         function initGame() {
             updateUI();
             generateNewEnemy();
+            
+            // Add upgrade buttons to party UI
+            updatePartyUI();
         }
 
         // Update all UI elements
@@ -436,6 +467,9 @@
                             <div class="h-full bg-green-500 rounded-full progress-bar" style="width: ${healthPercent}%"></div>
                         </div>
                         <div class="text-xs">${character.health}/${character.maxHealth}</div>
+                        <button class="mt-1 bg-blue-600 text-white text-xs px-1 py-0.5 rounded upgrade-btn" onclick="showUpgradeMenu(event, ${i})">
+                            <i class="fas fa-arrow-up"></i>
+                        </button>
                     `;
                     slot.classList.remove('empty-slot');
                 } else {
@@ -448,6 +482,139 @@
                 }
                 
                 partyContainer.appendChild(slot);
+            }
+        }
+
+        // Show upgrade menu for character
+        function showUpgradeMenu(event, slotIndex) {
+            event.stopPropagation();
+            const character = gameState.party[slotIndex];
+            if (!character) return;
+            
+            // Create upgrade menu
+            const menu = document.createElement('div');
+            menu.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
+            menu.innerHTML = `
+                <div class="bg-gray-800 rounded-lg p-6 w-80">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-xl font-bold">${character.name} Upgrades</h3>
+                        <button onclick="this.closest('.fixed').remove()" class="text-gray-400 hover:text-white">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="space-y-3">
+                        <div class="bg-gray-700 rounded-lg p-3">
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <h4 class="font-bold">Attack Power</h4>
+                                    <p class="text-sm text-gray-300">Current: ${character.attack}</p>
+                                </div>
+                                <button class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded-lg text-sm" 
+                                        onclick="upgradeStat(${slotIndex}, 'attack', 5, 50)">
+                                    +5 (50g)
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-gray-700 rounded-lg p-3">
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <h4 class="font-bold">Defense</h4>
+                                    <p class="text-sm text-gray-300">Current: ${character.defense}</p>
+                                </div>
+                                <button class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded-lg text-sm" 
+                                        onclick="upgradeStat(${slotIndex}, 'defense', 3, 40)">
+                                    +3 (40g)
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-gray-700 rounded-lg p-3">
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <h4 class="font-bold">Hit Points</h4>
+                                    <p class="text-sm text-gray-300">Current: ${character.maxHealth}</p>
+                                </div>
+                                <button class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded-lg text-sm" 
+                                        onclick="upgradeStat(${slotIndex}, 'maxHealth', 20, 60)">
+                                    +20 (60g)
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-gray-700 rounded-lg p-3">
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <h4 class="font-bold">Attack Speed</h4>
+                                    <p class="text-sm text-gray-300">Current: ${character.attackSpeed}ms</p>
+                                </div>
+                                <button class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded-lg text-sm" 
+                                        onclick="upgradeStat(${slotIndex}, 'attackSpeed', -100, 70)">
+                                    +100% (70g)
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-gray-700 rounded-lg p-3">
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <h4 class="font-bold">Dodge Rate</h4>
+                                    <p class="text-sm text-gray-300">Current: ${(character.dodgeRate * 100).toFixed(1)}%</p>
+                                </div>
+                                <button class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded-lg text-sm" 
+                                        onclick="upgradeStat(${slotIndex}, 'dodgeRate', 0.05, 80)">
+                                    +5% (80g)
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-gray-700 rounded-lg p-3">
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <h4 class="font-bold">Critical Chance</h4>
+                                    <p class="text-sm text-gray-300">Current: ${(character.critChance * 100).toFixed(1)}%</p>
+                                </div>
+                                <button class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded-lg text-sm" 
+                                        onclick="upgradeStat(${slotIndex}, 'critChance', 0.05, 90)">
+                                    +5% (90g)
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(menu);
+        }
+
+        // Upgrade character stat
+        function upgradeStat(slotIndex, stat, value, cost) {
+            const character = gameState.party[slotIndex];
+            if (!character) return;
+            
+            if (gameState.gold >= cost) {
+                gameState.gold -= cost;
+                
+                if (stat === 'maxHealth') {
+                    character.maxHealth += value;
+                    character.health += value; // Heal when increasing max health
+                } else if (stat === 'attackSpeed') {
+                    character.attackSpeed = Math.max(200, character.attackSpeed + value);
+                } else if (stat === 'dodgeRate' || stat === 'critChance') {
+                    character[stat] = Math.min(0.75, character[stat] + value); // Cap at 75%
+                } else {
+                    character[stat] += value;
+                }
+                
+                addToLog(`Upgraded ${character.name}'s ${stat} for ${cost} gold!`);
+                updateUI();
+                
+                // Close upgrade menu
+                const menu = document.querySelector('.fixed');
+                if (menu) menu.remove();
+            } else {
+                addToLog("Not enough gold for this upgrade!");
             }
         }
 
@@ -542,9 +709,12 @@
         // Generate a new enemy
         function generateNewEnemy() {
             // Scale enemy stats with floor
-            const floorModifier = 1 + (gameState.floor - 1) * 0.2;
+            const floorModifier = 1 + (gameState.floor - 1) * 0.3;
             
-            const baseEnemy = enemyTypes[Math.floor(Math.random() * enemyTypes.length)];
+            // Select enemy based on floor
+            let enemyIndex = Math.min(Math.floor(gameState.floor / 2), enemyTypes.length - 1);
+            const baseEnemy = enemyTypes[enemyIndex];
+            
             gameState.currentEnemy = {
                 ...baseEnemy,
                 health: Math.floor(baseEnemy.health * floorModifier),
@@ -599,6 +769,21 @@
                 return;
             }
             
+            // Medic healing
+            for (let i = 0; i < gameState.party.length; i++) {
+                const member = gameState.party[i];
+                if (member && member.name === "Medic" && member.health > 0) {
+                    // Heal random party member
+                    const aliveMembers = gameState.party.filter(m => m && m.health > 0);
+                    if (aliveMembers.length > 0) {
+                        const target = aliveMembers[Math.floor(Math.random() * aliveMembers.length)];
+                        const healAmount = Math.floor(target.maxHealth * 0.15); // Heal 15% of max health
+                        target.health = Math.min(target.maxHealth, target.health + healAmount);
+                        addToLog(`${member.name} heals ${target.name} for ${healAmount} HP!`);
+                    }
+                }
+            }
+            
             // Party attacks
             for (let i = 0; i < gameState.party.length; i++) {
                 const member = gameState.party[i];
@@ -641,7 +826,21 @@
         function attackEnemy(attacker) {
             if (!gameState.currentEnemy) return;
             
-            const damage = Math.max(1, attacker.attack - gameState.currentEnemy.defense / 2);
+            // Check for dodge
+            if (Math.random() < gameState.currentEnemy.dodgeRate) {
+                addToLog(`${gameState.currentEnemy.name} dodged ${attacker.name}'s attack!`);
+                return;
+            }
+            
+            // Calculate base damage
+            let damage = Math.max(1, attacker.attack - gameState.currentEnemy.defense / 2);
+            
+            // Check for critical hit
+            let isCritical = Math.random() < attacker.critChance;
+            if (isCritical) {
+                damage = Math.floor(damage * 1.5);
+            }
+            
             gameState.currentEnemy.health -= damage;
             
             // Show damage popup
@@ -698,14 +897,9 @@
                 member.health = 0;
                 addToLog(`${member.name} was defeated!`);
                 
-                // Remove from party if dead
-                setTimeout(() => {
-                    const memberIndex = gameState.party.findIndex(m => m === member);
-                    if (memberIndex !== -1) {
-                        gameState.party[memberIndex] = null;
-                        updateUI();
-                    }
-                }, 1000);
+                // Keep dead character in party but set health to 0
+                member.health = 0;
+                updateUI();
             }
             
             updateUI();
@@ -744,12 +938,17 @@
             } else if (!partial) {
                 addToLog("Party defeated! Returning to tavern...");
                 
-                // Reset party health for next battle
-                gameState.party.forEach((member, index) => {
+                // Reset to first enemy type
+                gameState.floor = 1;
+                
+                // Reset party health
+                gameState.party.forEach(member => {
                     if (member) {
-                        gameState.party[index] = null;
+                        member.health = member.maxHealth;
                     }
                 });
+                
+                generateNewEnemy();
             }
             
             if (!partial) {
